@@ -1,26 +1,64 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import Header from "./components/Header.js";
+import Cards from "./components/Cards.js";
+import AddForm from "./components/AddForm.js";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import "./App.css";
+
+class App extends Component {
+  state = {
+    books: JSON.parse(localStorage.getItem("books")) || [],
+  };
+
+  delBtn = (id) => {
+    const books = [...this.state.books.filter((book) => book.id !== id)];
+
+    this.setState({
+      books,
+    });
+
+    localStorage.setItem("books", JSON.stringify(books));
+  };
+
+  addBook = (book) => {
+    const books = [...this.state.books, book];
+
+    this.setState({
+      books,
+    });
+
+    localStorage.setItem("books", JSON.stringify(books));
+  };
+
+  changeRead = (id) => {
+    const books = [...this.state.books];
+
+    const book = books.find((book) => book.id === id);
+
+    book.readStatus === "Read"
+      ? (book.readStatus = "Unread")
+      : (book.readStatus = "Read");
+
+    this.setState({
+      books,
+    });
+
+    localStorage.setItem("books", JSON.stringify(books));
+  };
+
+  render() {
+    return (
+      <div className="container">
+        <Header />
+        <Cards
+          books={this.state.books}
+          delBtn={this.delBtn}
+          changeRead={this.changeRead}
+        />
+        <AddForm addBook={this.addBook} />
+      </div>
+    );
+  }
 }
 
 export default App;
